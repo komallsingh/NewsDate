@@ -67,5 +67,16 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.4.0") // For loading images
     implementation ("androidx.navigation:navigation-compose:2.7.2")
     implementation("androidx.compose.material:material-icons-extended")
+// Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+
+// Moshi Converter (for JSON)
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+
+// OkHttp (optional but helpful for logging)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+//swipe refresh
+    implementation("androidx.compose.material3:material3:1.2.0")
+    implementation("androidx.compose.material:material:1.6.0")
 
 }

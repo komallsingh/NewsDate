@@ -26,10 +26,14 @@ import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import coil.compose.AsyncImage
 
 @Composable
 fun NewsDateApp(viewModel: NewsViewModel = viewModel()) {
     val navController = rememberNavController()
+    //API KEY
+    val apiKey = "0b59e40df7c140fa828e61eff9a0df1f"
+
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
             NewsScreen(
@@ -60,7 +64,7 @@ fun NewsScreen(
     var searchQuery by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        viewModel.loadNews()
+        viewModel.loadNews("0b59e40df7c140fa828e61eff9a0df1f")
     }
 
     Scaffold(
@@ -88,7 +92,7 @@ fun NewsScreen(
                 value = searchQuery,
                 onValueChange = {
                     searchQuery = it
-                    viewModel.searchNews(it)
+                    viewModel.searchArticles(it)
                 },
                 label = { Text("Search News") },
                 modifier = Modifier.fillMaxWidth()
@@ -103,7 +107,7 @@ fun NewsScreen(
                     items(articles) { article ->
                         ArticleItem(
                             article = article,
-                            onBookmarkClick = { viewModel.toggleBookmark(it.title) }
+                            onBookmarkClick = { viewModel.toggleBookmark(it) }
                         )
                     }
                 }
@@ -132,7 +136,7 @@ fun SavedNewsScreen(viewModel: NewsViewModel, onBackClick: () -> Unit) {
             items(savedArticles) { article ->
                 ArticleItem(
                     article = article,
-                    onBookmarkClick = { viewModel.toggleBookmark(it.title) }
+                    onBookmarkClick = { viewModel.toggleBookmark(it) }
                 )
             }
 
@@ -149,6 +153,15 @@ fun ArticleItem(article: Article, onBookmarkClick: (Article) -> Unit) {
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
+            AsyncImage(
+                model = article.urlToImage,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(180.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween

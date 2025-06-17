@@ -1,25 +1,32 @@
-package com.komal.newsdate
-
+package com.komal.newsdate.repository
 
 import com.komal.newsdate.model.Article
-import kotlinx.coroutines.delay
+import com.komal.newsdate.network.RetrofitInstance
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import android.util.Log
 
 class NewsRepository {
-//FOR ADDING COROUTINES
-    suspend fun getFakeNews(): List<Article> {
-        delay(1000)  // Simulate network delay
-        return listOf(
-            Article("Android 15 Launched!", "Check out the new features in Android 15"),
-            Article("Jetpack Compose Rocks!", "Building UIs has never been easier"),
-            Article("Room Database Simplified", "Local caching for offline access")
-        )
-    }
 
-    suspend fun searchFakeNews(query: String): List<Article> {
-        delay(500)
-        return getFakeNews().filter { it.title.contains(query, ignoreCase = true) }
+    suspend fun getTopHeadlines(apiKey: String): List<Article> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = RetrofitInstance.api.getTopHeadlines(apiKey = apiKey)
+                if (response.isSuccessful) {
+                    response.body()?.articles ?: emptyList()
+                } else {
+                    Log.e("NewsRepository", "API Error: ${response.code()} - ${response.message()}")
+                    emptyList()
+                }
+            } catch (e: Exception) {
+                Log.e("NewsRepository", "Exception: ${e.localizedMessage}")
+                emptyList()
+            }
+        }
     }
 }
+
+
 //Repository Layer separates data sources from ViewModel/UI.
 
 //Future References
